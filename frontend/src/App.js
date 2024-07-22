@@ -26,6 +26,11 @@ const App = () => {
         <Route path="/contact" element={<Contact />} />
         <Route path="/about" element={<About />} />
       </Routes>
+      <footer>
+        <small>
+          <a href="#">Privacy Policy</a> • <a href="#">Terms of Service</a>
+        </small>
+      </footer>
     </Router>
   );
 };

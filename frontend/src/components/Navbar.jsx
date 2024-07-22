@@ -5,8 +5,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
 const Navbar = () => {
   return (
-    <nav className="navbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px', backgroundColor: '#f8f9fa' }}>
-      <div className="navbar-container">
+    <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px', backgroundColor: '#f8f9fa' }}>
         <Link to="/" className="navbar-logo">
           <img src="https://via.placeholder.com/150x50" alt="Logo" />
         </Link>
@@ -27,7 +26,6 @@ const Navbar = () => {
         <IconButton edge="end" color="inherit" aria-label="cart" component={Link} to="/cart">
           <ShoppingCartIcon />
         </IconButton>
-      </div>
     </nav>
   );
 };

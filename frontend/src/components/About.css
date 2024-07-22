@@ -1,0 +1,56 @@
+.about-hero {
+  position: relative;
+  text-align: center;
+  color: white;
+}
+
+.about-hero img {
+  width: 100%;
+  height: auto;
+}
+
+.about-hero-text {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 10px 20px;
+  border-radius: 5px;
+}
+
+.about-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  background-color: #f4f4f4; /* Matching the background color */
+}
+
+.about-text {
+  flex: 1.5;
+  padding: 1rem;
+  color: #333; /* Matching the text color */
+}
+
+.about-text h2 {
+  margin-top: 1.5rem;
+  color: #2a2a2a; /* Matching the header color */
+}
+
+.about-text ul {
+  list-style-type: disc;
+  margin-left: 1.5rem;
+}
+
+.about-image {
+  flex: 1;
+  padding: 1rem;
+  text-align: center;
+}
+
+.about-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+}

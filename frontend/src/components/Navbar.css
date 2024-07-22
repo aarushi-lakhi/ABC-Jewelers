@@ -1,9 +1,10 @@
 .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
     background-color: #fff;
     height: 80px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     font-size: 1.2rem;
     position: sticky;
     top: 0;
@@ -35,10 +36,13 @@
     align-items: center;
     list-style: none;
     text-align: center;
+    margin: 0;
+    padding: 0;
   }
   
   .nav-item {
     height: 80px;
+    margin: 0 15px;
   }
   
   .nav-links {
@@ -50,4 +54,3 @@
     height: 100%;
     cursor: pointer;
   }
-  

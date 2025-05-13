@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/header";
+import Footer from "@/components/footer";
 import { CartProvider } from "@/components/cart-provider";
 import { WishlistProvider } from "@/components/wishlist-provider";
 
@@ -26,7 +27,7 @@ export default function RootLayout({
           <WishlistProvider>
             <Header />
             <main>{children}</main>
-            {/* You can add a Footer component here later */}
+            <Footer />
           </WishlistProvider>
         </CartProvider>
         {/* </ProviderTree> */}

@@ -21,9 +21,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        {/* <ProviderTree> <--- If you have multiple providers, consider a helper component */}
+        {/* <ProviderTree> <- TODO: If you have multiple providers, consider a helper component */}
         {/* Wrap the components that need context with your providers */}
-        <CartProvider>
+        <CartProvider> 
+          {/* TODO: Are you supposed to nest providers like this? */}
           <WishlistProvider>
             <Header />
             <main>{children}</main>

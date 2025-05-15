@@ -6,11 +6,11 @@ export default function AboutPage() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="bg-accent paper-texture py-16 md:py-24 torn-paper-bottom">
+      <section className="bg-accent brown-paper py-16 md:py-24 torn-paper-bottom">
         <div className="container">
           <div className="mx-auto max-w-3xl text-center">
-            <h1 className="text-4xl font-bold tracking-tight md:text-5xl">About ABC Jewelers</h1>
-            <p className="mt-6 text-lg text-muted-foreground">
+            <h1 className="text-4xl font-light tracking-wide md:text-5xl">About ABC Jewelers</h1>
+            <p className="mt-6 text-lg text-muted-foreground font-light">
               Handcrafted jewelry with a mission to make a difference in healthcare accessibility
             </p>
           </div>

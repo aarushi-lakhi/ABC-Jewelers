@@ -1,6 +1,6 @@
 import Link from "next/link"
 import Image from "next/image"
-import { Facebook, Instagram, Twitter } from "lucide-react"
+import { Instagram, Mail, Star } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 
@@ -24,15 +24,15 @@ export default function Footer() {
                 </Link>
               </Button>
               <Button variant="ghost" size="icon" className="rounded-full" asChild>
-                <Link href="https://facebook.com" target="_blank" rel="noopener noreferrer">
-                  <Facebook className="h-5 w-5 text-primary" />
-                  <span className="sr-only">Facebook</span>
+                <Link href="mailto:jewelersabc@gmail.com">
+                  <Mail className="h-5 w-5 text-primary" />
+                  <span className="sr-only">Email</span>
                 </Link>
               </Button>
               <Button variant="ghost" size="icon" className="rounded-full" asChild>
-                <Link href="https://twitter.com" target="_blank" rel="noopener noreferrer">
-                  <Twitter className="h-5 w-5 text-primary" />
-                  <span className="sr-only">Twitter</span>
+                <Link href="https://g.page/review/abcjewelers" target="_blank" rel="noopener noreferrer">
+                  <Star className="h-5 w-5 text-primary" />
+                  <span className="sr-only">Google Reviews</span>
                 </Link>
               </Button>
             </div>
@@ -61,7 +61,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/collections" className="text-muted-foreground hover:text-primary">
+                <Link href="/shop" className="text-muted-foreground hover:text-primary">
                   Collections
                 </Link>
               </li>

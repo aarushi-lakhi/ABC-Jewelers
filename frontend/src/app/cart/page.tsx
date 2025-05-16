@@ -142,7 +142,7 @@ export default function CartPage() {
                 </div>
                 <div className="text-xs text-muted-foreground">
                   <p>
-                    Approximately ${(total * 0.2).toFixed(2)} of your purchase will fund medical care for those in need.
+                    Approximately ${(subtotal * 0.8).toFixed(2)} of your purchase will fund medical care for those in need.
                   </p>
                 </div>
               </div>
@@ -185,7 +185,7 @@ export default function CartPage() {
                   />
                 </svg>
                 <span className="text-sm font-medium">
-                  You're helping fund approximately {Math.floor((total * 0.2) / 10)} medical treatments
+                  You're helping fund approximately {Math.floor((subtotal * 0.8) / 150)} medical treatments
                 </span>
               </div>
             </div>

@@ -71,7 +71,7 @@ export default function CheckoutPage() {
           <div className="mb-6 rounded-md bg-primary/10 p-4 text-center">
             <p className="font-medium">Your Impact</p>
             <p className="text-sm text-muted-foreground">
-              Your purchase will help fund approximately {Math.floor((total * 0.2) / 10)} medical treatments for those
+              Your purchase will help fund approximately {Math.floor((subtotal * 0.8) / 150)} medical treatments for those
               in need. Thank you for making a difference!
             </p>
           </div>
@@ -436,7 +436,7 @@ export default function CheckoutPage() {
                 </div>
                 <div className="text-xs text-muted-foreground">
                   <p>
-                    Approximately ${(total * 0.2).toFixed(2)} of your purchase will fund medical care for those in need.
+                    Approximately ${(subtotal * 0.8).toFixed(2)} of your purchase will fund medical care for those in need.
                   </p>
                 </div>
               </div>
@@ -458,7 +458,7 @@ export default function CheckoutPage() {
                   />
                 </svg>
                 <span className="text-sm font-medium">
-                  You're helping fund approximately {Math.floor((total * 0.2) / 10)} medical treatments
+                  You're helping fund approximately {Math.floor((subtotal * 0.8) / 150)} medical treatments
                 </span>
               </div>
             </div>

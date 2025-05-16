@@ -6,7 +6,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Mail, Phone, MapPin, Clock } from "lucide-react"
+import { Instagram, Mail, Phone, MapPin, Clock, Star } from "lucide-react"
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -130,23 +130,31 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h3 className="font-medium">Email</h3>
-                      <p className="text-muted-foreground font-light">info@abcjewelers.com</p>
-                      <p className="text-muted-foreground font-light">support@abcjewelers.com</p>
+                      <p className="text-muted-foreground font-light">jewelersabc@gmail.com</p>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-4">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                      <Instagram className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-medium">Instagram</h3>
+                      <p className="text-muted-foreground font-light">@abc.jewelers</p>
+                    </div>
+                  </div>
+
+                  {/* <div className="flex items-start gap-4">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
                       <Phone className="h-5 w-5 text-primary" />
                     </div>
                     <div>
                       <h3 className="font-medium">Phone</h3>
-                      <p className="text-muted-foreground font-light">+1 (555) 123-4567</p>
                       <p className="text-muted-foreground font-light">Mon-Fri, 9am-5pm EST</p>
                     </div>
-                  </div>
+                  </div> */}
 
-                  <div className="flex items-start gap-4">
+                  {/* <div className="flex items-start gap-4">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
                       <MapPin className="h-5 w-5 text-primary" />
                     </div>
@@ -155,7 +163,7 @@ export default function ContactPage() {
                       <p className="text-muted-foreground font-light">123 Jewelry Lane</p>
                       <p className="text-muted-foreground font-light">Houston, TX 77001</p>
                     </div>
-                  </div>
+                  </div> */}
 
                   <div className="flex items-start gap-4">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
@@ -163,9 +171,9 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h3 className="font-medium">Hours</h3>
-                      <p className="text-muted-foreground font-light">Monday-Friday: 9am-5pm</p>
-                      <p className="text-muted-foreground font-light">Saturday: 10am-4pm</p>
-                      <p className="text-muted-foreground font-light">Sunday: Closed</p>
+                      <p className="text-muted-foreground font-light">Monday-Friday: 9am-8pm</p>
+                      <p className="text-muted-foreground font-light">Saturday: 9am-11pm</p>
+                      <p className="text-muted-foreground font-light">Sunday: 12pm-11pm</p>
                     </div>
                   </div>
                 </div>
@@ -174,7 +182,7 @@ export default function ContactPage() {
               <div className="mt-8 rounded-lg border bg-white p-6 shadow-sm">
                 <h2 className="mb-4 text-xl font-light">Follow Us</h2>
                 <p className="text-muted-foreground font-light mb-4">
-                  Stay connected with us on social media for updates, behind-the-scenes content, and impact stories.
+                  Stay connected with us for updates, behind-the-scenes content, and impact stories.
                 </p>
                 <div className="flex gap-4">
                   <a
@@ -188,24 +196,18 @@ export default function ContactPage() {
                     </svg>
                   </a>
                   <a
-                    href="https://facebook.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    href="mailto:info@abcjewelers.com"
                     className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-colors"
                   >
-                    <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z" />
-                    </svg>
+                    <Mail className="h-5 w-5" />
                   </a>
                   <a
-                    href="https://twitter.com"
+                    href="https://g.page/review/abcjewelers"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-colors"
                   >
-                    <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" />
-                    </svg>
+                    <Star className="h-5 w-5" />
                   </a>
                 </div>
               </div>
@@ -214,55 +216,6 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* Map Section */}
-      <section className="py-8 pb-16">
-        <div className="container">
-          <div className="rounded-lg overflow-hidden shadow-sm">
-            <div className="aspect-[16/9] w-full bg-gray-200 flex items-center justify-center">
-              <p className="text-muted-foreground font-light">Interactive map would be displayed here</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section className="bg-accent brown-paper py-16 torn-paper-top">
-        <div className="container">
-          <h2 className="mb-10 text-center text-3xl font-light">Frequently Asked Questions</h2>
-          <div className="mx-auto max-w-3xl">
-            <div className="space-y-6">
-              <div className="rounded-lg bg-white p-6 shadow-sm">
-                <h3 className="text-lg font-medium">How do my purchases make an impact?</h3>
-                <p className="mt-2 text-muted-foreground font-light">
-                  A portion of every purchase goes directly to funding medical care for low-income patients. We partner
-                  with established healthcare organizations to ensure your contribution makes a meaningful difference.
-                </p>
-              </div>
-              <div className="rounded-lg bg-white p-6 shadow-sm">
-                <h3 className="text-lg font-medium">What is your return policy?</h3>
-                <p className="mt-2 text-muted-foreground font-light">
-                  We accept returns within 30 days of purchase. Items must be in their original condition with tags
-                  attached. Please contact our customer service team to initiate a return.
-                </p>
-              </div>
-              <div className="rounded-lg bg-white p-6 shadow-sm">
-                <h3 className="text-lg font-medium">Do you offer international shipping?</h3>
-                <p className="mt-2 text-muted-foreground font-light">
-                  Yes, we ship to most countries worldwide. International shipping rates and delivery times vary by
-                  location. You can see the shipping options available during checkout.
-                </p>
-              </div>
-              <div className="rounded-lg bg-white p-6 shadow-sm">
-                <h3 className="text-lg font-medium">How can I track my order?</h3>
-                <p className="mt-2 text-muted-foreground font-light">
-                  Once your order ships, you'll receive a confirmation email with tracking information. You can also log
-                  into your account to view your order status and tracking details.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
     </div>
   )
 }

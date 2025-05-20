@@ -61,13 +61,14 @@ export default function FeaturedProducts() {
   const [animatingHeartId, setAnimatingHeartId] = useState<string | null>(null)
 
   const handleAddToCart = (product: (typeof products)[0]) => {
-    addItem({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      image: product.image,
-      quantity: 1,
-    })
+    // addItem({
+    //   id: product.id,
+    //   name: product.name,
+    //   price: product.price,
+    //   image: product.image,
+    //   quantity: 1,
+    // })
+    addItem(product.id, 1, undefined);
   }
 
   const handleQuickView = (product: (typeof products)[0]) => {
@@ -79,13 +80,14 @@ export default function FeaturedProducts() {
     if (isInWishlist(product.id)) {
       removeFromWishlist(product.id)
     } else {
-      addToWishlist({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        image: product.image,
-        category: product.category,
-      })
+      // addToWishlist({
+      //   id: product.id,
+      //   name: product.name,
+      //   price: product.price,
+      //   image: product.image,
+      //   category: product.category,
+      // })
+      addToWishlist(product.id);
       setAnimatingHeartId(product.id)
       setTimeout(() => setAnimatingHeartId(null), 1000)
     }

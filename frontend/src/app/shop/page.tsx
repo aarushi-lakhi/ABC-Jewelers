@@ -102,13 +102,14 @@ export default function ShopPage() {
   const { addItem } = useCart()
 
   const handleAddToCart = (product: (typeof products)[0]) => {
-    addItem({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      image: product.image,
-      quantity: 1,
-    })
+    // addItem({
+    //   id: product.id,
+    //   name: product.name,
+    //   price: product.price,
+    //   image: product.image,
+    //   quantity: 1,
+    // })
+    addItem(product.id, 1, undefined);
   }
 
   const handleQuickView = (product: (typeof products)[0]) => {

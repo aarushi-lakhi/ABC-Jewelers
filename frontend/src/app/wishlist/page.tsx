@@ -22,14 +22,15 @@ export default function WishlistPage() {
   }
 
   const handleAddToCart = (item: any) => {
-    addItem({
-      id: item.id,
-      name: item.name,
-      price: item.price,
-      image: item.image,
-      quantity: 1,
-    })
-    handleRemoveItem(item.id)
+    // addItem({
+    //   id: item.id,
+    //   name: item.name,
+    //   price: item.price,
+    //   image: item.image,
+    //   quantity: 1,
+    // })
+    addItem(item._id, 1, undefined);
+    handleRemoveItem(item._id)
   }
 
   if (items.length === 0) {
@@ -58,9 +59,9 @@ export default function WishlistPage() {
       <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {items.map((item) => (
           <div
-            key={item.id}
+            key={item._id}
             className={`product-card transition-all duration-300 ${
-              removingId === item.id ? "opacity-0 scale-95" : "opacity-100 scale-100"
+              removingId === item._id ? "opacity-0 scale-95" : "opacity-100 scale-100"
             }`}
           >
             <div className="relative aspect-square overflow-hidden">
@@ -84,7 +85,7 @@ export default function WishlistPage() {
                   size="icon"
                   variant="secondary"
                   className="h-9 w-9 rounded-full bg-white/80 text-red-500 hover:bg-white"
-                  onClick={() => handleRemoveItem(item.id)}
+                  onClick={() => handleRemoveItem(item._id)}
                 >
                   <Trash2 className="h-4 w-4" />
                   <span className="sr-only">Remove</span>
@@ -92,7 +93,7 @@ export default function WishlistPage() {
               </div>
             </div>
             <div className="flex flex-col gap-1 p-4">
-              <Link href={`/shop/${item.category}/${item.id}`} className="font-light hover:text-primary">
+              <Link href={`/shop/${item.category}/${item._id}`} className="font-light hover:text-primary">
                 {item.name}
               </Link>
               <div className="flex items-center justify-between">
@@ -101,7 +102,7 @@ export default function WishlistPage() {
                   variant="ghost"
                   size="sm"
                   className="text-xs font-light text-muted-foreground hover:text-primary"
-                  onClick={() => handleRemoveItem(item.id)}
+                  onClick={() => handleRemoveItem(item._id)}
                 >
                   Remove
                 </Button>

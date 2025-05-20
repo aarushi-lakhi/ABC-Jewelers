@@ -7,6 +7,7 @@ import Header from "@/components/header"
 import Footer from "@/components/footer"
 import { CartProvider } from "@/components/cart-provider"
 import { WishlistProvider } from "@/components/wishlist-provider"
+import { AuthProvider } from "@/components/auth-provider"
 
 // Properly load Montserrat font with Next.js
 const montserrat = Montserrat({
@@ -30,6 +31,7 @@ export default function RootLayout({
     <html lang="en" className={montserrat.variable}>
       <body className={montserrat.className}>
         {/* <ThemeProvider attribute="class" defaultTheme="light"> */}
+        <AuthProvider>
           <CartProvider>
             <WishlistProvider>
               <div className="flex min-h-screen flex-col">
@@ -39,6 +41,7 @@ export default function RootLayout({
               </div>
             </WishlistProvider>
           </CartProvider>
+        </AuthProvider>
         {/* </ThemeProvider> */}
       </body>
     </html>

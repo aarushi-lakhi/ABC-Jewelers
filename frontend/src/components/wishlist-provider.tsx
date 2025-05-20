@@ -1,90 +1,108 @@
 "use client"
 
-import type React from "react"
-
 import { createContext, useContext, useState, useEffect } from "react"
+import { productsAPI } from "@/lib/api"
+import { useAuth } from "./auth-provider"
 
-type WishlistItem = {
-  id: string
+interface WishlistItem {
+  _id: string
   name: string
   price: number
   image: string
   category: string
 }
 
-type WishlistContextType = {
+interface WishlistContextType {
   items: WishlistItem[]
-  wishlistCount: number
-  addItem: (item: WishlistItem) => void
-  removeItem: (id: string) => void
+  loading: boolean
+  error: string | null
+  addItem: (productId: string) => Promise<void>
+  removeItem: (productId: string) => Promise<void>
+  isInWishlist: (productId: string) => boolean
   clearWishlist: () => void
-  isInWishlist: (id: string) => boolean
 }
 
 const WishlistContext = createContext<WishlistContextType | undefined>(undefined)
 
 export function WishlistProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<WishlistItem[]>([])
-  const [loaded, setLoaded] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const { user } = useAuth()
 
+  // Load wishlist from localStorage on mount
   useEffect(() => {
-    // Load wishlist from localStorage on client side
     const savedWishlist = localStorage.getItem("wishlist")
     if (savedWishlist) {
-      try {
-        setItems(JSON.parse(savedWishlist))
-      } catch (e) {
-        console.error("Failed to parse wishlist from localStorage")
-      }
+      setItems(JSON.parse(savedWishlist))
     }
-    setLoaded(true)
   }, [])
 
+  // Save wishlist to localStorage whenever it changes
   useEffect(() => {
-    // Save wishlist to localStorage whenever it changes
-    if (loaded) {
-      localStorage.setItem("wishlist", JSON.stringify(items))
+    localStorage.setItem("wishlist", JSON.stringify(items))
+  }, [items])
+
+  const addItem = async (productId: string) => {
+    try {
+      setLoading(true)
+      setError(null)
+      const product = await productsAPI.getById(productId)
+      
+      setItems((prevItems) => {
+        if (prevItems.some((item) => item._id === productId)) {
+          return prevItems
+        }
+        return [
+          ...prevItems,
+          {
+            _id: product._id,
+            name: product.name,
+            price: product.price,
+            image: product.images[0],
+            category: product.category,
+          },
+        ]
+      })
+    } catch (err: any) {
+      setError(err.response?.data?.error || "Failed to add item to wishlist")
+      throw err
+    } finally {
+      setLoading(false)
     }
-  }, [items, loaded])
-
-  const wishlistCount = items.length
-
-  const addItem = (newItem: WishlistItem) => {
-    setItems((prevItems) => {
-      // Check if item already exists
-      const existingItemIndex = prevItems.findIndex((item) => item.id === newItem.id)
-
-      if (existingItemIndex > -1) {
-        // Item already in wishlist, so remove it
-        return prevItems.filter((_, index) => index !== existingItemIndex)
-      } else {
-        // Add new item
-        return [...prevItems, newItem]
-      }
-    })
   }
 
-  const removeItem = (id: string) => {
-    setItems((prevItems) => prevItems.filter((item) => item.id !== id))
+  const removeItem = async (productId: string) => {
+    try {
+      setLoading(true)
+      setError(null)
+      setItems((prevItems) => prevItems.filter((item) => item._id !== productId))
+    } catch (err: any) {
+      setError(err.response?.data?.error || "Failed to remove item from wishlist")
+      throw err
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const isInWishlist = (productId: string) => {
+    return items.some((item) => item._id === productId)
   }
 
   const clearWishlist = () => {
     setItems([])
   }
 
-  const isInWishlist = (id: string) => {
-    return items.some((item) => item.id === id)
-  }
-
   return (
     <WishlistContext.Provider
       value={{
         items,
-        wishlistCount,
+        loading,
+        error,
         addItem,
         removeItem,
-        clearWishlist,
         isInWishlist,
+        clearWishlist,
       }}
     >
       {children}

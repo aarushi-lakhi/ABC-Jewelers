@@ -414,11 +414,11 @@ export default function CheckoutPage() {
               <h2 className="mb-4 text-lg font-medium">Order Summary</h2>
               <div className="grid gap-3">
                 {items.map((item) => (
-                  <div key={item.id} className="flex items-center justify-between text-sm">
+                  <div key={item.product._id} className="flex items-center justify-between text-sm">
                     <span>
-                      {item.name} x {item.quantity}
+                      {item.product.name} x {item.quantity}
                     </span>
-                    <span>${(item.price * item.quantity).toFixed(2)}</span>
+                    <span>${(item.product.price * item.quantity).toFixed(2)}</span>
                   </div>
                 ))}
                 <div className="my-2 border-t pt-2"></div>

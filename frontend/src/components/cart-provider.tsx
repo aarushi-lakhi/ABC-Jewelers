@@ -1,25 +1,29 @@
 "use client"
 
-import type React from "react"
-
 import { createContext, useContext, useState, useEffect } from "react"
+import { productsAPI } from "@/lib/api"
+import { useAuth } from "./auth-provider"
 
-type CartItem = {
-  id: string
-  name: string
-  price: number
-  image: string
+export interface CartItem {
+  product: {
+    _id: string
+    name: string
+    price: number
+    image: string
+  }
   quantity: number
   options?: Record<string, string>
 }
 
-type CartContextType = {
+interface CartContextType {
   items: CartItem[]
-  cartCount: number
-  addItem: (item: CartItem) => void
-  updateQuantity: (id: string, quantity: number) => void
-  removeItem: (id: string) => void
+  loading: boolean
+  error: string | null
+  addItem: (productId: string, quantity?: number, options?: Record<string, string>) => Promise<void>
+  removeItem: (productId: string) => void
+  updateQuantity: (productId: string, quantity: number) => void
   clearCart: () => void
+  totalItems: number
   subtotal: number
 }
 
@@ -27,73 +31,103 @@ const CartContext = createContext<CartContextType | undefined>(undefined)
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([])
-  const [loaded, setLoaded] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const { user } = useAuth()
 
+  // Load cart from localStorage on mount
   useEffect(() => {
-    // Load cart from localStorage on client side
     const savedCart = localStorage.getItem("cart")
     if (savedCart) {
-      try {
-        setItems(JSON.parse(savedCart))
-      } catch (e) {
-        console.error("Failed to parse cart from localStorage")
-      }
+      setItems(JSON.parse(savedCart))
     }
-    setLoaded(true)
   }, [])
 
+  // Save cart to localStorage whenever it changes
   useEffect(() => {
-    // Save cart to localStorage whenever it changes
-    if (loaded) {
-      localStorage.setItem("cart", JSON.stringify(items))
+    localStorage.setItem("cart", JSON.stringify(items))
+  }, [items])
+
+  const addItem = async (productId: string, quantity = 1, options?: Record<string, string>) => {
+    try {
+      setLoading(true)
+      setError(null)
+      const product = await productsAPI.getById(productId)
+      
+      setItems((prevItems) => {
+        const existingItem = prevItems.find(
+          (item) => item.product._id === productId && JSON.stringify(item.options) === JSON.stringify(options)
+        )
+        
+        if (existingItem) {
+          return prevItems.map((item) =>
+            item.product._id === productId && JSON.stringify(item.options) === JSON.stringify(options)
+              ? { ...item, quantity: item.quantity + quantity }
+              : item
+          )
+        }
+        
+        return [
+          ...prevItems,
+          {
+            product: {
+              _id: product._id,
+              name: product.name,
+              price: product.price,
+              image: product.images[0],
+            },
+            quantity,
+            options,
+          },
+        ]
+      })
+    } catch (err: any) {
+      setError(err.response?.data?.error || "Failed to add item to cart")
+      throw err
+    } finally {
+      setLoading(false)
     }
-  }, [items, loaded])
+  }
 
-  const cartCount = items.reduce((total, item) => total + item.quantity, 0)
+  const removeItem = (productId: string) => {
+    setItems((prevItems) => prevItems.filter((item) => item.product._id !== productId))
+  }
 
-  const subtotal = items.reduce((total, item) => total + item.price * item.quantity, 0)
+  const updateQuantity = (productId: string, quantity: number) => {
+    if (quantity < 1) {
+      removeItem(productId)
+      return
+    }
 
-  const addItem = (newItem: CartItem) => {
-    setItems((prevItems) => {
-      // Check if item already exists with same options
-      const existingItemIndex = prevItems.findIndex(
-        (item) => item.id === newItem.id && JSON.stringify(item.options) === JSON.stringify(newItem.options),
+    setItems((prevItems) =>
+      prevItems.map((item) =>
+        item.product._id === productId ? { ...item, quantity } : item
       )
-
-      if (existingItemIndex > -1) {
-        // Update quantity of existing item
-        const updatedItems = [...prevItems]
-        updatedItems[existingItemIndex].quantity += newItem.quantity
-        return updatedItems
-      } else {
-        // Add new item
-        return [...prevItems, newItem]
-      }
-    })
-  }
-
-  const updateQuantity = (id: string, quantity: number) => {
-    setItems((prevItems) => prevItems.map((item) => (item.id === id ? { ...item, quantity } : item)))
-  }
-
-  const removeItem = (id: string) => {
-    setItems((prevItems) => prevItems.filter((item) => item.id !== id))
+    )
   }
 
   const clearCart = () => {
     setItems([])
   }
 
+  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0)
+  const calculatedSubtotal = items.reduce(
+    (sum, item) => sum + item.product.price * item.quantity,
+    0
+  )
+
   return (
     <CartContext.Provider
       value={{
         items,
-        cartCount,
+        loading,
+        error,
         addItem,
-        updateQuantity,
         removeItem,
+        updateQuantity,
         clearCart,
-        subtotal,
+        totalItems,
+        subtotal: calculatedSubtotal,
       }}
     >
       {children}

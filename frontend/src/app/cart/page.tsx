@@ -50,15 +50,15 @@ export default function CartPage() {
             <div className="p-6">
               <div className="grid gap-6">
                 {items.map((item) => (
-                  <div key={item.id} className="grid grid-cols-[80px_1fr] gap-4 sm:grid-cols-[120px_1fr]">
+                  <div key={item.product._id} className="grid grid-cols-[80px_1fr] gap-4 sm:grid-cols-[120px_1fr]">
                     <div className="relative aspect-square overflow-hidden rounded-md">
-                      <Image src={item.image || "/placeholder.svg"} alt={item.name} fill className="object-cover" />
+                      <Image src={item.product.image || "/placeholder.svg"} alt={item.product.name} fill className="object-cover" />
                     </div>
                     <div className="grid gap-2">
                       <div className="flex items-start justify-between">
                         <div>
-                          <h3 className="font-medium">{item.name}</h3>
-                          <p className="text-sm text-muted-foreground">${item.price.toFixed(2)} each</p>
+                          <h3 className="font-medium">{item.product.name}</h3>
+                          <p className="text-sm text-muted-foreground">${item.product.price.toFixed(2)} each</p>
                           {item.options && Object.keys(item.options).length > 0 && (
                             <div className="mt-1 text-xs text-muted-foreground">
                               {Object.entries(item.options).map(([key, value]) => (
@@ -73,7 +73,7 @@ export default function CartPage() {
                           variant="ghost"
                           size="icon"
                           className="text-muted-foreground"
-                          onClick={() => removeItem(item.id)}
+                          onClick={() => removeItem(item.product._id)}
                         >
                           <Trash2 className="h-4 w-4" />
                           <span className="sr-only">Remove</span>
@@ -84,7 +84,7 @@ export default function CartPage() {
                           variant="outline"
                           size="icon"
                           className="h-8 w-8"
-                          onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1))}
+                          onClick={() => updateQuantity(item.product._id, Math.max(1, item.quantity - 1))}
                           disabled={item.quantity <= 1}
                         >
                           <Minus className="h-3 w-3" />
@@ -95,12 +95,12 @@ export default function CartPage() {
                           variant="outline"
                           size="icon"
                           className="h-8 w-8"
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          onClick={() => updateQuantity(item.product._id, item.quantity + 1)}
                         >
                           <Plus className="h-3 w-3" />
                           <span className="sr-only">Increase quantity</span>
                         </Button>
-                        <div className="ml-auto font-medium">${(item.price * item.quantity).toFixed(2)}</div>
+                        <div className="ml-auto font-medium">${(item.product.price * item.quantity).toFixed(2)}</div>
                       </div>
                     </div>
                   </div>

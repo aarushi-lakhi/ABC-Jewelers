@@ -157,7 +157,7 @@ interface ResolvedProductPageParams {
   }
 
 export default function ProductPage({ params: paramsPromise }: ProductPageProps) {
-    // Unwrap the params Promise using React.use()
+  // Unwrap the params Promise using React.use()
   // This must be called at the top level of the component or hook.
   const params = use(paramsPromise);
 
@@ -219,19 +219,26 @@ export default function ProductPage({ params: paramsPromise }: ProductPageProps)
         }));
     };
 
-    const handleAddToCart = () => {
+    const handleAddToCart = async () => {
         if (!selectedOptions) return; // Guard if options not initialized
 
         const finalPrice = product.price + (selectedOptions.customization === "Engraving (+$5)" ? 5 : 0);
 
-        addItem({
-            id: product.id,
-            name: product.name,
-            price: finalPrice,
-            image: product.images[0], // FullProduct always has images, use the first one
-            quantity,
-            options: selectedOptions,
-        });
+        
+        try {
+            // await addItem({
+            //         id: product.id,
+            //         name: product.name,
+            //         price: finalPrice,
+            //         image: product.images[0], // FullProduct always has images, use the first one
+            //         quantity,
+            //         options: selectedOptions,
+            //     });
+            await addItem(product.id, quantity, selectedOptions);
+            console.log("Item added to cart:", product.name);
+        } catch (error) {
+            console.error("Failed to add item to cart:", error);
+        }
     };
 
     // product.relatedProducts is ProductId[]. products[id] will be SimpleProduct here.

@@ -39,7 +39,15 @@ export const productController = {
     }
   },
 
-  // Get a single product by ID
+  getCategories: async (req: Request, res: Response) => {
+    try {
+      const categories = await Product.distinct('category');
+      res.json(categories);
+    } catch (error) {
+      res.status(500).json({ error: 'Error fetching categories' });
+    }
+  },
+
   getProductById: async (req: Request, res: Response) => {
     try {
       const product = await Product.findById(req.params.id);

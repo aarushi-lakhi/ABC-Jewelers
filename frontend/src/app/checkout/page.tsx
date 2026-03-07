@@ -4,15 +4,20 @@ import type React from "react"
 
 import { useState } from "react"
 import Link from "next/link"
-import { Check } from "lucide-react"
+import { Check, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useCart } from "@/components/cart-provider"
+import { useAuth } from "@/components/auth-provider"
+import { ordersAPI, stripeAPI } from "@/lib/api"
 
 export default function CheckoutPage() {
   const { items, subtotal, clearCart } = useCart()
+  const { user } = useAuth()
   const [step, setStep] = useState(1)
   const [orderPlaced, setOrderPlaced] = useState(false)
-  // TODO: need to integrate Stripe API
+  const [orderError, setOrderError] = useState<string | null>(null)
+  const [submitting, setSubmitting] = useState(false)
+  const [orderId, setOrderId] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -23,11 +28,6 @@ export default function CheckoutPage() {
     state: "",
     zipCode: "",
     country: "United States",
-    paymentMethod: "credit-card",
-    cardNumber: "",
-    cardName: "",
-    cardExpiry: "",
-    cardCvc: "",
     notes: "",
   })
 
@@ -39,20 +39,72 @@ export default function CheckoutPage() {
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleRadioChange = (value: string) => {
-    setFormData((prev) => ({ ...prev, paymentMethod: value }))
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setOrderError(null)
+
     if (step === 1) {
       setStep(2)
       window.scrollTo(0, 0)
-    } else {
-      // TODO: need to submit this order to a backend
+      return
+    }
+
+    setSubmitting(true)
+    try {
+      const orderItems = items.map((item) => ({
+        productId: item.product._id,
+        name: item.product.name,
+        price: item.product.price,
+        quantity: item.quantity,
+        options: {
+          materials: item.options?.materials || "",
+          customization: item.options?.customization || "",
+        },
+      }))
+
+      const orderData = {
+        items: orderItems,
+        shippingAddress: {
+          street: formData.address,
+          city: formData.city,
+          state: formData.state,
+          zipCode: formData.zipCode,
+          country: formData.country,
+        },
+        paymentMethod: "stripe",
+        ...(user
+          ? {}
+          : {
+              guestEmail: formData.email,
+              guestName: `${formData.firstName} ${formData.lastName}`,
+            }),
+      }
+
+      const order = await ordersAPI.create(orderData)
+      setOrderId(order._id)
+
+      try {
+        const session = await stripeAPI.createCheckoutSession({
+          orderId: order._id,
+          successUrl: `${window.location.origin}/checkout/success?orderId=${order._id}`,
+          cancelUrl: `${window.location.origin}/checkout`,
+        })
+
+        if (session.url) {
+          window.location.href = session.url
+          return
+        }
+      } catch {
+        // Stripe not configured yet — fall through to simple confirmation
+      }
+
       setOrderPlaced(true)
       clearCart()
       window.scrollTo(0, 0)
+    } catch (err: any) {
+      setOrderError(err.response?.data?.error || "Failed to place order. Please try again.")
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -67,7 +119,12 @@ export default function CheckoutPage() {
           <p className="mb-6 text-muted-foreground">
             Thank you for your purchase. Your order has been placed and will be processed soon.
           </p>
-          <p className="mb-6 text-sm text-muted-foreground">Order confirmation has been sent to {formData.email}</p>
+          {orderId && (
+            <p className="mb-2 text-sm text-muted-foreground">
+              Order ID: <span className="font-mono font-medium">{orderId}</span>
+            </p>
+          )}
+          <p className="mb-6 text-sm text-muted-foreground">Order confirmation has been sent to {formData.email || user?.email}</p>
           <div className="mb-6 rounded-md bg-primary/10 p-4 text-center">
             <p className="font-medium">Your Impact</p>
             <p className="text-sm text-muted-foreground">
@@ -101,6 +158,18 @@ export default function CheckoutPage() {
   return (
     <div className="container py-8 md:py-12">
       <h1 className="mb-6 text-3xl font-bold">Checkout</h1>
+
+      {!user && (
+        <div className="mb-6 rounded-lg border border-primary/20 bg-primary/5 p-4">
+          <p className="text-sm">
+            <Link href="/account" className="font-medium text-primary hover:underline">
+              Log in
+            </Link>{" "}
+            to track your order and view order history. Or continue as a guest below.
+          </p>
+        </div>
+      )}
+
       <div className="mb-8 flex justify-center">
         <div className="flex w-full max-w-md items-center">
           <div className={`flex-1 border-b-2 pb-2 ${step >= 1 ? "border-primary" : "border-muted"}`}>
@@ -124,7 +193,7 @@ export default function CheckoutPage() {
               >
                 2
               </div>
-              <span className={step >= 2 ? "font-medium" : "text-muted-foreground"}>Payment</span>
+              <span className={step >= 2 ? "font-medium" : "text-muted-foreground"}>Review & Pay</span>
             </div>
           </div>
         </div>
@@ -139,124 +208,73 @@ export default function CheckoutPage() {
                   <h2 className="mb-4 text-lg font-medium">Shipping Information</h2>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div className="grid gap-2">
-                      <label htmlFor="firstName" className="text-sm font-medium">
-                        First Name
-                      </label>
+                      <label htmlFor="firstName" className="text-sm font-medium">First Name</label>
                       <input
-                        id="firstName"
-                        name="firstName"
-                        type="text"
+                        id="firstName" name="firstName" type="text"
                         className="rounded-md border px-3 py-2"
-                        value={formData.firstName}
-                        onChange={handleInputChange}
-                        required
+                        value={formData.firstName} onChange={handleInputChange} required
                       />
                     </div>
                     <div className="grid gap-2">
-                      <label htmlFor="lastName" className="text-sm font-medium">
-                        Last Name
-                      </label>
+                      <label htmlFor="lastName" className="text-sm font-medium">Last Name</label>
                       <input
-                        id="lastName"
-                        name="lastName"
-                        type="text"
+                        id="lastName" name="lastName" type="text"
                         className="rounded-md border px-3 py-2"
-                        value={formData.lastName}
-                        onChange={handleInputChange}
-                        required
+                        value={formData.lastName} onChange={handleInputChange} required
                       />
                     </div>
                     <div className="grid gap-2">
-                      <label htmlFor="email" className="text-sm font-medium">
-                        Email
-                      </label>
+                      <label htmlFor="email" className="text-sm font-medium">Email</label>
                       <input
-                        id="email"
-                        name="email"
-                        type="email"
+                        id="email" name="email" type="email"
                         className="rounded-md border px-3 py-2"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        required
+                        value={formData.email} onChange={handleInputChange} required
                       />
                     </div>
                     <div className="grid gap-2">
-                      <label htmlFor="phone" className="text-sm font-medium">
-                        Phone
-                      </label>
+                      <label htmlFor="phone" className="text-sm font-medium">Phone</label>
                       <input
-                        id="phone"
-                        name="phone"
-                        type="tel"
+                        id="phone" name="phone" type="tel"
                         className="rounded-md border px-3 py-2"
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                        required
+                        value={formData.phone} onChange={handleInputChange} required
                       />
                     </div>
                     <div className="grid gap-2 sm:col-span-2">
-                      <label htmlFor="address" className="text-sm font-medium">
-                        Address
-                      </label>
+                      <label htmlFor="address" className="text-sm font-medium">Address</label>
                       <input
-                        id="address"
-                        name="address"
-                        type="text"
+                        id="address" name="address" type="text"
                         className="rounded-md border px-3 py-2"
-                        value={formData.address}
-                        onChange={handleInputChange}
-                        required
+                        value={formData.address} onChange={handleInputChange} required
                       />
                     </div>
                     <div className="grid gap-2">
-                      <label htmlFor="city" className="text-sm font-medium">
-                        City
-                      </label>
+                      <label htmlFor="city" className="text-sm font-medium">City</label>
                       <input
-                        id="city"
-                        name="city"
-                        type="text"
+                        id="city" name="city" type="text"
                         className="rounded-md border px-3 py-2"
-                        value={formData.city}
-                        onChange={handleInputChange}
-                        required
+                        value={formData.city} onChange={handleInputChange} required
                       />
                     </div>
                     <div className="grid gap-2">
-                      <label htmlFor="state" className="text-sm font-medium">
-                        State / Province
-                      </label>
+                      <label htmlFor="state" className="text-sm font-medium">State / Province</label>
                       <input
-                        id="state"
-                        name="state"
-                        type="text"
+                        id="state" name="state" type="text"
                         className="rounded-md border px-3 py-2"
-                        value={formData.state}
-                        onChange={handleInputChange}
-                        required
+                        value={formData.state} onChange={handleInputChange} required
                       />
                     </div>
                     <div className="grid gap-2">
-                      <label htmlFor="zipCode" className="text-sm font-medium">
-                        ZIP / Postal Code
-                      </label>
+                      <label htmlFor="zipCode" className="text-sm font-medium">ZIP / Postal Code</label>
                       <input
-                        id="zipCode"
-                        name="zipCode"
-                        type="text"
+                        id="zipCode" name="zipCode" type="text"
                         className="rounded-md border px-3 py-2"
-                        value={formData.zipCode}
-                        onChange={handleInputChange}
-                        required
+                        value={formData.zipCode} onChange={handleInputChange} required
                       />
                     </div>
                     <div className="grid gap-2">
-                      <label htmlFor="country" className="text-sm font-medium">
-                        Country
-                      </label>
+                      <label htmlFor="country" className="text-sm font-medium">Country</label>
                       <select
-                        id="country"
-                        name="country"
+                        id="country" name="country"
                         className="rounded-md border px-3 py-2"
                         value={formData.country}
                         onChange={(e) => setFormData((prev) => ({ ...prev, country: e.target.value }))}
@@ -269,130 +287,44 @@ export default function CheckoutPage() {
                       </select>
                     </div>
                     <div className="grid gap-2 sm:col-span-2">
-                      <label htmlFor="notes" className="text-sm font-medium">
-                        Order Notes (Optional)
-                      </label>
+                      <label htmlFor="notes" className="text-sm font-medium">Order Notes (Optional)</label>
                       <textarea
-                        id="notes"
-                        name="notes"
-                        rows={3}
+                        id="notes" name="notes" rows={3}
                         className="rounded-md border px-3 py-2"
-                        value={formData.notes}
-                        onChange={handleInputChange}
-                      ></textarea>
+                        value={formData.notes} onChange={handleInputChange}
+                      />
                     </div>
                   </div>
                   <div className="mt-6 flex justify-end">
-                    <Button type="submit">Continue to Payment</Button>
+                    <Button type="submit">Continue to Review</Button>
                   </div>
                 </form>
               )}
 
               {step === 2 && (
                 <form onSubmit={handleSubmit}>
-                  <h2 className="mb-4 text-lg font-medium">Payment Method</h2>
-                  <div className="mb-6 grid gap-4">
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="radio"
-                        id="credit-card"
-                        name="paymentMethod"
-                        value="credit-card"
-                        checked={formData.paymentMethod === "credit-card"}
-                        onChange={() => handleRadioChange("credit-card")}
-                        className="h-4 w-4"
-                      />
-                      <label htmlFor="credit-card" className="text-sm font-medium">
-                        Credit Card
-                      </label>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="radio"
-                        id="paypal"
-                        name="paymentMethod"
-                        value="paypal"
-                        checked={formData.paymentMethod === "paypal"}
-                        onChange={() => handleRadioChange("paypal")}
-                        className="h-4 w-4"
-                      />
-                      <label htmlFor="paypal" className="text-sm font-medium">
-                        PayPal
-                      </label>
-                    </div>
+                  <h2 className="mb-4 text-lg font-medium">Review Your Order</h2>
+
+                  <div className="mb-6 rounded-md border p-4">
+                    <h3 className="mb-2 text-sm font-medium">Shipping To</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {formData.firstName} {formData.lastName}<br />
+                      {formData.address}<br />
+                      {formData.city}, {formData.state} {formData.zipCode}<br />
+                      {formData.country}
+                    </p>
                   </div>
 
-                  {formData.paymentMethod === "credit-card" && (
-                    <div className="grid gap-4">
-                      <div className="grid gap-2">
-                        <label htmlFor="cardNumber" className="text-sm font-medium">
-                          Card Number
-                        </label>
-                        <input
-                          id="cardNumber"
-                          name="cardNumber"
-                          type="text"
-                          placeholder="1234 5678 9012 3456"
-                          className="rounded-md border px-3 py-2"
-                          value={formData.cardNumber}
-                          onChange={handleInputChange}
-                          required
-                        />
-                      </div>
-                      <div className="grid gap-2">
-                        <label htmlFor="cardName" className="text-sm font-medium">
-                          Name on Card
-                        </label>
-                        <input
-                          id="cardName"
-                          name="cardName"
-                          type="text"
-                          className="rounded-md border px-3 py-2"
-                          value={formData.cardName}
-                          onChange={handleInputChange}
-                          required
-                        />
-                      </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="grid gap-2">
-                          <label htmlFor="cardExpiry" className="text-sm font-medium">
-                            Expiration Date
-                          </label>
-                          <input
-                            id="cardExpiry"
-                            name="cardExpiry"
-                            type="text"
-                            placeholder="MM/YY"
-                            className="rounded-md border px-3 py-2"
-                            value={formData.cardExpiry}
-                            onChange={handleInputChange}
-                            required
-                          />
-                        </div>
-                        <div className="grid gap-2">
-                          <label htmlFor="cardCvc" className="text-sm font-medium">
-                            CVC
-                          </label>
-                          <input
-                            id="cardCvc"
-                            name="cardCvc"
-                            type="text"
-                            placeholder="123"
-                            className="rounded-md border px-3 py-2"
-                            value={formData.cardCvc}
-                            onChange={handleInputChange}
-                            required
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                  <div className="mb-6 rounded-md border p-4">
+                    <h3 className="mb-2 text-sm font-medium">Payment</h3>
+                    <p className="text-sm text-muted-foreground">
+                      You will be redirected to a secure payment page to complete your purchase.
+                    </p>
+                  </div>
 
-                  {formData.paymentMethod === "paypal" && (
-                    <div className="rounded-md bg-muted p-4 text-center">
-                      <p className="text-sm">
-                        You will be redirected to PayPal to complete your payment after placing your order.
-                      </p>
+                  {orderError && (
+                    <div className="mb-4 rounded-md border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
+                      {orderError}
                     </div>
                   )}
 
@@ -400,7 +332,10 @@ export default function CheckoutPage() {
                     <Button type="button" variant="outline" onClick={() => setStep(1)}>
                       Back
                     </Button>
-                    <Button type="submit">Place Order</Button>
+                    <Button type="submit" disabled={submitting}>
+                      {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                      Place Order
+                    </Button>
                   </div>
                 </form>
               )}
@@ -434,11 +369,6 @@ export default function CheckoutPage() {
                   <span>Total</span>
                   <span>${total.toFixed(2)}</span>
                 </div>
-                <div className="text-xs text-muted-foreground">
-                  <p>
-                    Approximately ${(subtotal * 0.8).toFixed(2)} of your purchase will fund medical care for those in need.
-                  </p>
-                </div>
               </div>
             </div>
           </div>
@@ -458,7 +388,7 @@ export default function CheckoutPage() {
                   />
                 </svg>
                 <span className="text-sm font-medium">
-                  You're helping fund approximately {Math.floor((subtotal * 0.8) / 150)} medical treatments
+                  You&apos;re helping fund approximately {Math.floor((subtotal * 0.8) / 150)} medical treatments
                 </span>
               </div>
             </div>

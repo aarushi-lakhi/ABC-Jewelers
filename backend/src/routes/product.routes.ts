@@ -6,6 +6,7 @@ const router = express.Router();
 
 // Public routes
 router.get('/', productController.getAllProducts);
+router.get('/categories', productController.getCategories);
 router.get('/:id', productController.getProductById);
 
 // Protected routes

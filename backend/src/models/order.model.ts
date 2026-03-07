@@ -1,15 +1,18 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IOrder extends Document {
-  userId: mongoose.Types.ObjectId;
+  userId?: mongoose.Types.ObjectId;
+  guestEmail?: string;
+  guestName?: string;
+  stripeSessionId?: string;
   items: {
     productId: mongoose.Types.ObjectId;
     name: string;
     price: number;
     quantity: number;
     options: {
-      materials: string;
-      customization: string;
+      materials?: string;
+      customization?: string;
     };
   }[];
   totalAmount: number;
@@ -23,13 +26,18 @@ export interface IOrder extends Document {
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   paymentStatus: 'pending' | 'completed' | 'failed';
   paymentMethod: string;
+  promoCode?: string;
+  discountAmount?: number;
   createdAt: Date;
   updatedAt: Date;
 }
 
 const orderSchema = new Schema<IOrder>(
   {
-    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    userId: { type: Schema.Types.ObjectId, ref: 'User', default: null },
+    guestEmail: { type: String },
+    guestName: { type: String },
+    stripeSessionId: { type: String },
     items: [
       {
         productId: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
@@ -37,7 +45,7 @@ const orderSchema = new Schema<IOrder>(
         price: { type: Number, required: true },
         quantity: { type: Number, required: true, min: 1 },
         options: {
-          materials: { type: String, required: true },
+          materials: { type: String },
           customization: { type: String },
         },
       },
@@ -61,6 +69,8 @@ const orderSchema = new Schema<IOrder>(
       default: 'pending',
     },
     paymentMethod: { type: String, required: true },
+    promoCode: { type: String },
+    discountAmount: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

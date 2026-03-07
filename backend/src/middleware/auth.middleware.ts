@@ -2,9 +2,17 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/user.model';
 
-interface AuthRequest extends Request {
+export interface AuthRequest extends Request {
   user?: any;
 }
+
+const getJwtSecret = (): string => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error('JWT_SECRET environment variable is required');
+  }
+  return secret;
+};
 
 export const auth = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
@@ -14,7 +22,7 @@ export const auth = async (req: AuthRequest, res: Response, next: NextFunction) 
       throw new Error();
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret_key');
+    const decoded = jwt.verify(token, getJwtSecret());
     const user = await User.findOne({ _id: (decoded as any)._id });
 
     if (!user) {
@@ -26,6 +34,22 @@ export const auth = async (req: AuthRequest, res: Response, next: NextFunction) 
   } catch (error) {
     res.status(401).json({ error: 'Please authenticate.' });
   }
+};
+
+export const optionalAuth = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const token = req.header('Authorization')?.replace('Bearer ', '');
+    if (token) {
+      const decoded = jwt.verify(token, getJwtSecret());
+      const user = await User.findOne({ _id: (decoded as any)._id });
+      if (user) {
+        req.user = user;
+      }
+    }
+  } catch {
+    // Token invalid or expired — proceed as guest
+  }
+  next();
 };
 
 export const adminAuth = async (req: AuthRequest, res: Response, next: NextFunction) => {

@@ -34,8 +34,9 @@ export default function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
   const pathname = usePathname()
-  const { cartCount } = useCart()
-  const { wishlistCount } = useWishlist()
+  const { totalItems: cartCount } = useCart()
+  const { items: wishlistItems } = useWishlist()
+  const wishlistCount = wishlistItems.length
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   // Close dropdown when clicking outside

@@ -68,9 +68,9 @@ export const ordersAPI = {
       name: string;
       price: number;
       quantity: number;
-      options: {
-        materials: string;
-        customization: string;
+      options?: {
+        materials?: string;
+        customization?: string;
       };
     }>;
     shippingAddress: {
@@ -81,6 +81,9 @@ export const ordersAPI = {
       country: string;
     };
     paymentMethod: string;
+    guestEmail?: string;
+    guestName?: string;
+    promoCode?: string;
   }) => {
     const response = await api.post('/orders', data);
     return response.data;
@@ -95,6 +98,14 @@ export const ordersAPI = {
   },
   cancel: async (id: string) => {
     const response = await api.post(`/orders/${id}/cancel`);
+    return response.data;
+  },
+};
+
+// Stripe API
+export const stripeAPI = {
+  createCheckoutSession: async (data: { orderId: string; successUrl: string; cancelUrl: string }) => {
+    const response = await api.post('/stripe/create-checkout-session', data);
     return response.data;
   },
 };

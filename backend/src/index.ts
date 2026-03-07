@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import { productRoutes } from './routes/product.routes';
 import { orderRoutes } from './routes/order.routes';
 import { userRoutes } from './routes/user.routes';
+import { stripeRoutes } from './routes/stripe.routes';
 
 dotenv.config();
 
@@ -12,12 +13,16 @@ const app = express();
 
 // Middleware
 app.use(cors());
+
+// Stripe webhook needs raw body — must be registered before express.json()
+app.use('/api/stripe/webhook', express.raw({ type: 'application/json' }));
 app.use(express.json());
 
 // Routes
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/stripe', stripeRoutes);
 
 // MongoDB connection
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/abc_jewelers';

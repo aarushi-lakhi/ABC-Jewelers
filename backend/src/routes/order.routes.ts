@@ -1,17 +1,19 @@
 import express from 'express';
 import { orderController } from '../controllers/order.controller';
-import { auth, adminAuth } from '../middleware/auth.middleware';
+import { auth, optionalAuth, adminAuth } from '../middleware/auth.middleware';
 
 const router = express.Router();
 
-// Protected routes
+// Guest-or-authenticated order creation
+router.post('/', optionalAuth, orderController.createOrder);
+
+// Protected routes (require login)
 router.get('/my-orders', auth, orderController.getUserOrders);
-router.get('/:id', auth, orderController.getOrderById);
-router.post('/', auth, orderController.createOrder);
-router.post('/:id/cancel', auth, orderController.cancelOrder);
+router.get('/:id', optionalAuth, orderController.getOrderById);
+router.post('/:id/cancel', optionalAuth, orderController.cancelOrder);
 
 // Admin routes
 router.get('/', adminAuth, orderController.getAllOrders);
 router.put('/:id/status', adminAuth, orderController.updateOrderStatus);
 
-export const orderRoutes = router; 
+export const orderRoutes = router;

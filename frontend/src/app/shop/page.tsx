@@ -24,15 +24,24 @@ export default function ShopPage() {
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [filters, setFilters] = useState({
     categories: [] as string[],
-    priceRange: [0, 40] as [number, number],
+    priceRange: [0, 10] as [number, number],
     sortBy: "featured",
   })
+  const [maxPrice, setMaxPrice] = useState(10)
   const { addItem } = useCart()
 
   useEffect(() => {
     productsAPI
       .getAll({ sortBy: filters.sortBy })
-      .then((data) => setProducts(data))
+      .then((data) => {
+        setProducts(data)
+        const computed = data.length > 0
+          ? Math.ceil(Math.max(...data.map((p: Product) => p.price)))
+          : 10
+        const rounded = Math.max(10, computed)
+        setMaxPrice(rounded)
+        setFilters(prev => ({ ...prev, priceRange: [0, rounded] as [number, number] }))
+      })
       .catch(() => setProducts([]))
       .finally(() => setLoading(false))
   }, [])
@@ -151,9 +160,9 @@ export default function ShopPage() {
                   <h3 className="mb-4 text-lg font-medium">Price Range</h3>
                   <div className="px-2">
                     <Slider
-                      defaultValue={[0, 40]}
-                      max={40}
-                      step={1}
+                      defaultValue={[0, maxPrice]}
+                      max={maxPrice}
+                      step={0.5}
                       value={[filters.priceRange[0], filters.priceRange[1]]}
                       onValueChange={handlePriceRangeChange}
                     />
@@ -166,7 +175,7 @@ export default function ShopPage() {
                 <Button
                   variant="outline"
                   onClick={() => {
-                    setFilters({ categories: [], priceRange: [0, 40], sortBy: "featured" })
+                    setFilters({ categories: [], priceRange: [0, maxPrice], sortBy: "featured" })
                   }}
                 >
                   Reset Filters
@@ -201,9 +210,9 @@ export default function ShopPage() {
               <h3 className="mb-4 text-lg font-medium">Price Range</h3>
               <div className="px-2">
                 <Slider
-                  defaultValue={[0, 40]}
-                  max={40}
-                  step={1}
+                  defaultValue={[0, maxPrice]}
+                  max={maxPrice}
+                  step={0.5}
                   value={[filters.priceRange[0], filters.priceRange[1]]}
                   onValueChange={handlePriceRangeChange}
                 />
@@ -216,7 +225,7 @@ export default function ShopPage() {
             <Button
               variant="outline"
               onClick={() => {
-                setFilters({ categories: [], priceRange: [0, 40], sortBy: "featured" })
+                setFilters({ categories: [], priceRange: [0, maxPrice], sortBy: "featured" })
               }}
             >
               Reset Filters
@@ -232,7 +241,7 @@ export default function ShopPage() {
               <Button
                 variant="outline"
                 onClick={() => {
-                  setFilters({ categories: [], priceRange: [0, 40], sortBy: "featured" })
+                  setFilters({ categories: [], priceRange: [0, maxPrice], sortBy: "featured" })
                 }}
               >
                 Reset Filters

@@ -59,13 +59,14 @@ export default function CartPage() {
                         <div>
                           <h3 className="font-medium">{item.product.name}</h3>
                           <p className="text-sm text-muted-foreground">${item.product.price.toFixed(2)} each</p>
-                          {item.options && Object.keys(item.options).length > 0 && (
+                          {item.options && (
                             <div className="mt-1 text-xs text-muted-foreground">
-                              {Object.entries(item.options).map(([key, value]) => (
-                                <p key={key}>
-                                  {key}: {value}
-                                </p>
-                              ))}
+                              {item.options.customization && (
+                                <p>{item.options.customization}</p>
+                              )}
+                              {item.options.note && (
+                                <p className="italic">Note: {item.options.note}</p>
+                              )}
                             </div>
                           )}
                         </div>
@@ -79,29 +80,43 @@ export default function CartPage() {
                           <span className="sr-only">Remove</span>
                         </Button>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => updateQuantity(item.product._id, Math.max(1, item.quantity - 1))}
-                          disabled={item.quantity <= 1}
-                        >
-                          <Minus className="h-3 w-3" />
-                          <span className="sr-only">Decrease quantity</span>
-                        </Button>
-                        <span className="w-8 text-center">{item.quantity}</span>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => updateQuantity(item.product._id, item.quantity + 1)}
-                        >
-                          <Plus className="h-3 w-3" />
-                          <span className="sr-only">Increase quantity</span>
-                        </Button>
-                        <div className="ml-auto font-medium">${(item.product.price * item.quantity).toFixed(2)}</div>
-                      </div>
+                      {item.product.category === "chains" ? (
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="number"
+                            min="1"
+                            value={item.quantity}
+                            onChange={(e) => updateQuantity(item.product._id, Math.max(1, parseInt(e.target.value) || 1))}
+                            className="h-8 w-16 rounded-md border px-2 text-center text-sm"
+                          />
+                          <span className="text-sm text-muted-foreground">in.</span>
+                          <div className="ml-auto font-medium">${(item.product.price * item.quantity).toFixed(2)}</div>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => updateQuantity(item.product._id, Math.max(1, item.quantity - 1))}
+                            disabled={item.quantity <= 1}
+                          >
+                            <Minus className="h-3 w-3" />
+                            <span className="sr-only">Decrease quantity</span>
+                          </Button>
+                          <span className="w-8 text-center">{item.quantity}</span>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => updateQuantity(item.product._id, item.quantity + 1)}
+                          >
+                            <Plus className="h-3 w-3" />
+                            <span className="sr-only">Increase quantity</span>
+                          </Button>
+                          <div className="ml-auto font-medium">${(item.product.price * item.quantity).toFixed(2)}</div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}

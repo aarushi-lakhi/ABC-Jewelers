@@ -24,7 +24,7 @@ export default function ShopPage() {
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [filters, setFilters] = useState({
     categories: [] as string[],
-    priceRange: [0, 50] as [number, number],
+    priceRange: [0, 40] as [number, number],
     sortBy: "featured",
   })
   const { addItem } = useCart()
@@ -151,8 +151,8 @@ export default function ShopPage() {
                   <h3 className="mb-4 text-lg font-medium">Price Range</h3>
                   <div className="px-2">
                     <Slider
-                      defaultValue={[0, 50]}
-                      max={50}
+                      defaultValue={[0, 40]}
+                      max={40}
                       step={1}
                       value={[filters.priceRange[0], filters.priceRange[1]]}
                       onValueChange={handlePriceRangeChange}
@@ -166,7 +166,7 @@ export default function ShopPage() {
                 <Button
                   variant="outline"
                   onClick={() => {
-                    setFilters({ categories: [], priceRange: [0, 50], sortBy: "featured" })
+                    setFilters({ categories: [], priceRange: [0, 40], sortBy: "featured" })
                   }}
                 >
                   Reset Filters
@@ -201,8 +201,8 @@ export default function ShopPage() {
               <h3 className="mb-4 text-lg font-medium">Price Range</h3>
               <div className="px-2">
                 <Slider
-                  defaultValue={[0, 50]}
-                  max={50}
+                  defaultValue={[0, 40]}
+                  max={40}
                   step={1}
                   value={[filters.priceRange[0], filters.priceRange[1]]}
                   onValueChange={handlePriceRangeChange}
@@ -216,7 +216,7 @@ export default function ShopPage() {
             <Button
               variant="outline"
               onClick={() => {
-                setFilters({ categories: [], priceRange: [0, 50], sortBy: "featured" })
+                setFilters({ categories: [], priceRange: [0, 40], sortBy: "featured" })
               }}
             >
               Reset Filters
@@ -232,7 +232,7 @@ export default function ShopPage() {
               <Button
                 variant="outline"
                 onClick={() => {
-                  setFilters({ categories: [], priceRange: [0, 50], sortBy: "featured" })
+                  setFilters({ categories: [], priceRange: [0, 40], sortBy: "featured" })
                 }}
               >
                 Reset Filters

@@ -29,6 +29,7 @@ export default function ProductPage({ params: paramsPromise }: ProductPageProps)
     materials: "",
     customization: "",
   })
+  const [note, setNote] = useState("")
   const { addItem } = useCart()
 
   useEffect(() => {
@@ -91,7 +92,12 @@ export default function ProductPage({ params: paramsPromise }: ProductPageProps)
 
   const handleAddToCart = async () => {
     try {
-      await addItem(product._id, quantity, selectedOptions)
+      const options: Record<string, string> = {
+        materials: selectedOptions.materials,
+        customization: selectedOptions.customization,
+      }
+      if (note.trim()) options.note = note.trim()
+      await addItem(product._id, quantity, options)
     } catch (err) {
       console.error("Failed to add item to cart:", err)
     }
@@ -218,33 +224,76 @@ export default function ProductPage({ params: paramsPromise }: ProductPageProps)
               </div>
             )}
 
-            <div>
-              <h3 className="mb-2 font-medium">Quantity</h3>
-              <div className="flex items-center">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  disabled={quantity <= 1}
-                >
-                  <Minus className="h-4 w-4" />
-                  <span className="sr-only">Decrease quantity</span>
-                </Button>
-                <span className="w-12 text-center">{quantity}</span>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => setQuantity(quantity + 1)}
-                  disabled={quantity >= product.stock}
-                >
-                  <Plus className="h-4 w-4" />
-                  <span className="sr-only">Increase quantity</span>
-                </Button>
+            {product.category === "chains" ? (
+              <div>
+                <h3 className="mb-2 font-medium">Length (inches)</h3>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="number"
+                    min="1"
+                    value={quantity}
+                    onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                    className="w-24 rounded-md border px-3 py-2 text-center"
+                  />
+                  <span className="text-sm text-muted-foreground">inches</span>
+                </div>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  ${product.price.toFixed(2)} per inch · total: ${(product.price * quantity).toFixed(2)}
+                </p>
               </div>
-              {product.stock > 0 && product.stock <= 5 && (
-                <p className="mt-1 text-sm text-orange-600">Only {product.stock} left in stock</p>
-              )}
-            </div>
+            ) : (
+              <div>
+                <h3 className="mb-2 font-medium">Quantity</h3>
+                <div className="flex items-center">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    disabled={quantity <= 1}
+                  >
+                    <Minus className="h-4 w-4" />
+                    <span className="sr-only">Decrease quantity</span>
+                  </Button>
+                  <span className="w-12 text-center">{quantity}</span>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setQuantity(quantity + 1)}
+                    disabled={quantity >= product.stock}
+                  >
+                    <Plus className="h-4 w-4" />
+                    <span className="sr-only">Increase quantity</span>
+                  </Button>
+                </div>
+                {product.stock > 0 && product.stock <= 5 && (
+                  <p className="mt-1 text-sm text-orange-600">Only {product.stock} left in stock</p>
+                )}
+              </div>
+            )}
+
+            {(product.category === "chains" || product.category === "charms") && (
+              <div>
+                <h3 className="mb-2 font-medium">
+                  {product.category === "chains"
+                    ? "Any charms to attach? (optional)"
+                    : "Any chain to pair with? (optional)"}
+                </h3>
+                <textarea
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  placeholder={
+                    product.category === "chains"
+                      ? 'e.g. Zodiac Sign Charm – Libra, Alphabet Charm "A"'
+                      : "e.g. Silver Thin Curb Chain, 16 inches"
+                  }
+                  className="w-full rounded-md border px-3 py-2 text-sm"
+                  rows={2}
+                />
+                <p className="mt-1 text-xs text-muted-foreground">
+                  We'll put it together for you — just let us know what you'd like!
+                </p>
+              </div>
+            )}
           </div>
 
           <div className="flex flex-col gap-4 sm:flex-row">

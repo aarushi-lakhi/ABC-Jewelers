@@ -58,7 +58,10 @@ export default function CheckoutPage() {
         quantity: item.quantity,
         options: {
           materials: item.options?.materials || "",
-          customization: item.options?.customization || "",
+          customization: [
+            item.options?.customization,
+            item.options?.note ? `Note: ${item.options.note}` : "",
+          ].filter(Boolean).join(" | "),
         },
       }))
 

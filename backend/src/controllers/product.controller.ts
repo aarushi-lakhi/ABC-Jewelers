@@ -29,7 +29,9 @@ export const productController = {
           sort = { createdAt: -1 };
           break;
         default:
-          sort = { featured: -1 };
+          // Within a category, respect Wix display order. On the all-products
+          // view, float featured products first then fall back to Wix order.
+          sort = category ? { sortOrder: 1 } : { featured: -1, sortOrder: 1 };
       }
 
       const products = await Product.find(query).sort(sort);

@@ -22,6 +22,7 @@ export interface IProduct extends Document {
   }[];
   relatedProducts: mongoose.Types.ObjectId[];
   stock: number;
+  sortOrder: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -51,6 +52,7 @@ const productSchema = new Schema<IProduct>(
     ],
     relatedProducts: [{ type: Schema.Types.ObjectId, ref: 'Product' }],
     stock: { type: Number, required: true, default: 0 },
+    sortOrder: { type: Number, default: 999 },
   },
   { timestamps: true }
 );

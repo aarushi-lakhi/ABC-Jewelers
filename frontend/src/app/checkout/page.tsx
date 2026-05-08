@@ -131,8 +131,7 @@ export default function CheckoutPage() {
           <div className="mb-6 rounded-md bg-primary/10 p-4 text-center">
             <p className="font-medium">Your Impact</p>
             <p className="text-sm text-muted-foreground">
-              Your purchase will help fund approximately {Math.floor((subtotal * 0.8) / 150)} medical treatments for those
-              in need. Thank you for making a difference!
+              <span className="font-semibold text-foreground">${(subtotal * 0.8).toFixed(2)}</span> of your purchase goes directly to medical care for those in need. Thank you for making a difference!
             </p>
           </div>
           <Button asChild>
@@ -377,12 +376,9 @@ export default function CheckoutPage() {
           </div>
           <div className="mt-6 rounded-lg border p-6">
             <h3 className="mb-4 text-sm font-medium">Your Impact</h3>
-            <p className="text-sm text-muted-foreground">
-              Your purchase will help fund medical care for low-income patients. Thank you for making a difference!
-            </p>
-            <div className="mt-4 rounded-md bg-primary/10 p-3">
-              <div className="flex items-center gap-2">
-                <svg className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="rounded-md bg-primary/10 p-3">
+              <div className="flex items-start gap-2">
+                <svg className="mt-0.5 h-5 w-5 shrink-0 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -390,9 +386,14 @@ export default function CheckoutPage() {
                     d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
                   />
                 </svg>
-                <span className="text-sm font-medium">
-                  You&apos;re helping fund approximately {Math.floor((subtotal * 0.8) / 150)} medical treatments
-                </span>
+                <div>
+                  <p className="text-sm font-medium">
+                    ${(subtotal * 0.8).toFixed(2)} of your purchase goes directly to medical care
+                  </p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    80¢ of every dollar funds medical treatments for low-income patients. Thank you for making a difference!
+                  </p>
+                </div>
               </div>
             </div>
           </div>

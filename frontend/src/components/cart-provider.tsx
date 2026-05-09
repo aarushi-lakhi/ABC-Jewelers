@@ -11,6 +11,7 @@ export interface CartItem {
     price: number
     image: string
     category: string
+    stock: number
   }
   quantity: number
   options?: Record<string, string>
@@ -77,6 +78,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
               price: product.price,
               image: product.images[0],
               category: product.category,
+              stock: product.stock,
             },
             quantity,
             options,

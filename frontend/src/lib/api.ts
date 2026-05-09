@@ -58,6 +58,10 @@ export const productsAPI = {
     const response = await api.post(`/products/${productId}/reviews`, data);
     return response.data;
   },
+  update: async (id: string, data: { stock?: number; price?: number; name?: string; featured?: boolean }) => {
+    const response = await api.put(`/products/${id}`, data);
+    return response.data;
+  },
 };
 
 // Orders API

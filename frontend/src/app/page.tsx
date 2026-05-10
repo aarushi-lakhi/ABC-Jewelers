@@ -57,23 +57,23 @@ export default function Home() {
           <div className="relative mx-auto grid max-w-[500px] grid-cols-2 gap-4">
             <div className="polaroid rotate-[-3deg]">
               <Image
-                src="/placeholder.svg?height=400&width=300"
-                alt="Earrings Collection"
+                src="https://static.wixstatic.com/media/7033d2_43ba603877af421ca34b7a17db1c9b2f~mv2.jpg/v1/fill/w_300,h_400,q_90/file.jpg"
+                alt="Butterfly Earrings"
                 width={300}
                 height={400}
                 className="h-auto w-full object-cover"
               />
-              <p className="polaroid-caption">From ABC's Earring Collection</p>
+              <p className="polaroid-caption">From ABC&apos;s Earring Collection</p>
             </div>
             <div className="polaroid mt-8 rotate-[2deg]">
               <Image
-                src="/placeholder.svg?height=400&width=300"
-                alt="Rings Collection"
+                src="https://static.wixstatic.com/media/7033d2_88537998a2b048f58dda3ade1ef19d9c~mv2.jpg/v1/fill/w_300,h_400,q_90/file.jpg"
+                alt="Gold Plated Moon Ring"
                 width={300}
                 height={400}
                 className="h-auto w-full object-cover"
               />
-              <p className="polaroid-caption">From ABC's Ring Collection</p>
+              <p className="polaroid-caption">From ABC&apos;s Ring Collection</p>
             </div>
           </div>
         </div>

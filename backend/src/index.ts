@@ -6,6 +6,7 @@ import { productRoutes } from './routes/product.routes';
 import { orderRoutes } from './routes/order.routes';
 import { userRoutes } from './routes/user.routes';
 import { stripeRoutes } from './routes/stripe.routes';
+import { emailRoutes } from './routes/email.routes';
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/stripe', stripeRoutes);
+app.use('/api/email', emailRoutes);
 
 // MongoDB connection
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/abc_jewelers';

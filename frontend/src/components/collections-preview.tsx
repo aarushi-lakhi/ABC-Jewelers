@@ -7,25 +7,25 @@ const collections = [
     id: "earrings",
     name: "Earrings",
     description: "Handcrafted earrings in various styles and designs",
-    image: "/placeholder.svg?height=400&width=300",
+    image: "https://static.wixstatic.com/media/7033d2_2666911222f047dc8f546d4ea70f4243~mv2.png/v1/fill/w_600,h_800,q_90/file.jpg",
   },
   {
     id: "rings",
     name: "Rings",
     description: "Beautiful rings for every occasion",
-    image: "/placeholder.svg?height=400&width=300",
+    image: "https://static.wixstatic.com/media/7033d2_48ab4cf2a3fd49b7800d5cd3d0dcdf1c~mv2.jpg/v1/fill/w_600,h_800,q_90/file.jpg",
   },
   {
     id: "charms",
     name: "Charms",
     description: "Unique charms to personalize your jewelry",
-    image: "/placeholder.svg?height=400&width=300",
+    image: "https://static.wixstatic.com/media/7033d2_894b988e0fc841fe89be1420d012c0cb~mv2.png/v1/fill/w_600,h_800,q_90/file.jpg",
   },
   {
     id: "chains",
     name: "Chains",
     description: "Elegant chains for necklaces and bracelets",
-    image: "/placeholder.svg?height=400&width=300",
+    image: "https://static.wixstatic.com/media/7033d2_3d88408f9b8f4895a9d3eaf427bfdb00~mv2.png/v1/fill/w_600,h_800,q_90/file.jpg",
   },
 ]
 

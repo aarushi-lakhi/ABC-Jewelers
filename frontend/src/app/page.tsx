@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react"
 import FeaturedProducts from "@/components/featured-products"
 import ImpactSection from "@/components/impact-section"
 import CollectionsPreview from "@/components/collections-preview"
+import NewsletterSection from "@/components/newsletter-section"
 
 // Testimonials data
 const testimonials = [
@@ -143,30 +144,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Newsletter */}
-      <section className="py-16 paper-texture">
-        <div className="container">
-          <div className="rounded-lg bg-primary/10 p-8 md:p-12">
-            <div className="mx-auto max-w-2xl text-center">
-              <h2 className="mb-4 text-2xl font-light tracking-wide md:text-3xl soft-heading">Join Our Community</h2>
-              <p className="mb-6 font-light text-gray-600">
-                Subscribe to our newsletter for new product announcements, special offers, and stories about our impact.
-              </p>
-              <form className="flex flex-col gap-3 sm:flex-row sm:justify-center">
-                <input
-                  type="email"
-                  placeholder="Your email address"
-                  className="rounded-md border bg-white/80 px-4 py-2 sm:min-w-[300px]"
-                  required
-                />
-                <Button type="submit" className="font-light">
-                  Subscribe
-                </Button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </section>
+      <NewsletterSection />
     </div>
   )
 }

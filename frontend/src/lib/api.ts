@@ -114,6 +114,18 @@ export const stripeAPI = {
   },
 };
 
+// Email API
+export const emailAPI = {
+  contact: async (data: { name: string; email: string; subject: string; message: string }) => {
+    const response = await api.post('/email/contact', data);
+    return response.data;
+  },
+  newsletter: async (email: string) => {
+    const response = await api.post('/email/newsletter', { email });
+    return response.data;
+  },
+};
+
 // Wishlist API
 export const wishlistAPI = {
   get: async () => {

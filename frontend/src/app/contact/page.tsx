@@ -1,49 +1,53 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
+import { Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Instagram, Mail, Phone, MapPin, Clock, Star } from "lucide-react"
+import { Instagram, Mail, Clock } from "lucide-react"
+import { emailAPI } from "@/lib/api"
 
 export default function ContactPage() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-  })
+  const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" })
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
+    setFormData(prev => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // TODO: need to send the form data to backend
-    setIsSubmitted(true)
+    setError(null)
+    setSubmitting(true)
+    try {
+      await emailAPI.contact(formData)
+      setIsSubmitted(true)
+    } catch (err: any) {
+      setError(err.response?.data?.error || "Failed to send message. Please email us at jewelersabc@gmail.com.")
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
     <div className="flex flex-col">
-      {/* Hero Section */}
       <section className="bg-accent brown-paper py-16 md:py-24 torn-paper-bottom">
         <div className="container">
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="text-4xl font-light tracking-wide md:text-5xl">Contact Us</h1>
             <p className="mt-6 text-lg text-muted-foreground font-light">
-              We'd love to hear from you! Whether you have a question about our products, impact initiatives, or
+              We&apos;d love to hear from you! Whether you have a question about our products, impact initiatives, or
               anything else, our team is ready to help.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Contact Form & Info */}
       <section className="py-16">
         <div className="container">
           <div className="grid gap-8 md:grid-cols-2">
@@ -52,14 +56,11 @@ export default function ContactPage() {
                 <div className="rounded-lg border bg-primary/10 p-8 text-center">
                   <h2 className="mb-4 text-2xl font-light">Thank You!</h2>
                   <p className="text-muted-foreground font-light">
-                    Your message has been sent successfully. We'll get back to you as soon as possible.
+                    Your message has been sent. We&apos;ll get back to you as soon as possible.
                   </p>
                   <Button
                     className="mt-6 font-light"
-                    onClick={() => {
-                      setIsSubmitted(false)
-                      setFormData({ name: "", email: "", subject: "", message: "" })
-                    }}
+                    onClick={() => { setIsSubmitted(false); setFormData({ name: "", email: "", subject: "", message: "" }) }}
                   >
                     Send Another Message
                   </Button>
@@ -69,50 +70,24 @@ export default function ContactPage() {
                   <h2 className="mb-6 text-2xl font-light">Send Us a Message</h2>
                   <form onSubmit={handleSubmit} className="grid gap-4">
                     <div className="grid gap-2">
-                      <label htmlFor="name" className="text-sm font-light">
-                        Your Name
-                      </label>
+                      <label htmlFor="name" className="text-sm font-light">Your Name</label>
                       <Input id="name" name="name" value={formData.name} onChange={handleInputChange} required />
                     </div>
                     <div className="grid gap-2">
-                      <label htmlFor="email" className="text-sm font-light">
-                        Your Email
-                      </label>
-                      <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        required
-                      />
+                      <label htmlFor="email" className="text-sm font-light">Your Email</label>
+                      <Input id="email" name="email" type="email" value={formData.email} onChange={handleInputChange} required />
                     </div>
                     <div className="grid gap-2">
-                      <label htmlFor="subject" className="text-sm font-light">
-                        Subject
-                      </label>
-                      <Input
-                        id="subject"
-                        name="subject"
-                        value={formData.subject}
-                        onChange={handleInputChange}
-                        required
-                      />
+                      <label htmlFor="subject" className="text-sm font-light">Subject</label>
+                      <Input id="subject" name="subject" value={formData.subject} onChange={handleInputChange} required />
                     </div>
                     <div className="grid gap-2">
-                      <label htmlFor="message" className="text-sm font-light">
-                        Your Message
-                      </label>
-                      <Textarea
-                        id="message"
-                        name="message"
-                        rows={5}
-                        value={formData.message}
-                        onChange={handleInputChange}
-                        required
-                      />
+                      <label htmlFor="message" className="text-sm font-light">Your Message</label>
+                      <Textarea id="message" name="message" rows={5} value={formData.message} onChange={handleInputChange} required />
                     </div>
-                    <Button type="submit" className="mt-2 font-light">
+                    {error && <p className="text-sm text-destructive">{error}</p>}
+                    <Button type="submit" className="mt-2 font-light" disabled={submitting}>
+                      {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                       Send Message
                     </Button>
                   </form>
@@ -133,7 +108,6 @@ export default function ContactPage() {
                       <p className="text-muted-foreground font-light">jewelersabc@gmail.com</p>
                     </div>
                   </div>
-
                   <div className="flex items-start gap-4">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
                       <Instagram className="h-5 w-5 text-primary" />
@@ -143,37 +117,15 @@ export default function ContactPage() {
                       <p className="text-muted-foreground font-light">@abc.jewelers</p>
                     </div>
                   </div>
-
-                  {/* <div className="flex items-start gap-4">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                      <Phone className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium">Phone</h3>
-                      <p className="text-muted-foreground font-light">Mon-Fri, 9am-5pm EST</p>
-                    </div>
-                  </div> */}
-
-                  {/* <div className="flex items-start gap-4">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                      <MapPin className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium">Location</h3>
-                      <p className="text-muted-foreground font-light">123 Jewelry Lane</p>
-                      <p className="text-muted-foreground font-light">Houston, TX 77001</p>
-                    </div>
-                  </div> */}
-
                   <div className="flex items-start gap-4">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
                       <Clock className="h-5 w-5 text-primary" />
                     </div>
                     <div>
                       <h3 className="font-medium">Hours</h3>
-                      <p className="text-muted-foreground font-light">Monday-Friday: 9am-8pm</p>
-                      <p className="text-muted-foreground font-light">Saturday: 9am-11pm</p>
-                      <p className="text-muted-foreground font-light">Sunday: 12pm-11pm</p>
+                      <p className="text-muted-foreground font-light">Monday–Friday: 9am–8pm</p>
+                      <p className="text-muted-foreground font-light">Saturday: 9am–11pm</p>
+                      <p className="text-muted-foreground font-light">Sunday: 12pm–11pm</p>
                     </div>
                   </div>
                 </div>
@@ -181,8 +133,8 @@ export default function ContactPage() {
 
               <div className="mt-8 rounded-lg border bg-white p-6 shadow-sm">
                 <h2 className="mb-4 text-xl font-light">Follow Us</h2>
-                <p className="text-muted-foreground font-light mb-4">
-                  Stay connected with us for updates, behind-the-scenes content, and impact stories.
+                <p className="mb-4 text-muted-foreground font-light">
+                  Stay connected for updates, behind-the-scenes content, and impact stories.
                 </p>
                 <div className="flex gap-4">
                   <a
@@ -196,18 +148,10 @@ export default function ContactPage() {
                     </svg>
                   </a>
                   <a
-                    href="mailto:info@abcjewelers.com"
+                    href="mailto:jewelersabc@gmail.com"
                     className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-colors"
                   >
                     <Mail className="h-5 w-5" />
-                  </a>
-                  <a
-                    href="https://g.page/review/abcjewelers"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-colors"
-                  >
-                    <Star className="h-5 w-5" />
                   </a>
                 </div>
               </div>
@@ -215,7 +159,6 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
-
     </div>
   )
 }

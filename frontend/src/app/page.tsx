@@ -13,21 +13,21 @@ const testimonials = [
     id: 1,
     quote: "From the moment I laid eyes on their pieces, I was struck by ABC Jeweler's beauty and craftsmanship. The attention to detail is remarkable and each piece is a work of art. 10/10 would recommend to anyone looking for sustainable and adorable jewelry pieces!! I feel amazing wearing ABC :)",
     author: "Hanna T.",
-    avatarUrl: "/placeholder.svg?height=40&width=40", // TODO: update this with avatars
+    avatarUrl: "/customer1_hanna.png",
     rating: 5,
   },
   {
     id: 2,
     quote: "ABC Jewelers sells great jewelry for a great cause. Their rings especially have contributed to many slay outfits",
     author: "Isaac F.",
-    avatarUrl: "/placeholder.svg?height=40&width=40",
+    avatarUrl: "/customer2_isaac.png",
     rating: 5,
   },
   {
     id: 3,
     quote: "One of the best handmade, sustainable and ethically made jewelry pieces I possess. Great communication and customization options. Highly recommended, also great communication with international customers.",
     author: "Bartosz D.",
-    avatarUrl: "/placeholder.svg?height=40&width=40",
+    avatarUrl: "/customer3_bartosz.png",
     rating: 5,
   },
 ];

@@ -7,6 +7,7 @@ import { Trash2, ShoppingCart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useWishlist } from "@/components/wishlist-provider"
 import { useCart } from "@/components/cart-provider"
+import type { WishlistItem } from "@/components/wishlist-provider"
 
 export default function WishlistPage() {
   const { items, removeItem, clearWishlist } = useWishlist()
@@ -21,25 +22,18 @@ export default function WishlistPage() {
     }, 300)
   }
 
-  const handleAddToCart = (item: any) => {
-    // addItem({
-    //   id: item.id,
-    //   name: item.name,
-    //   price: item.price,
-    //   image: item.image,
-    //   quantity: 1,
-    // })
-    addItem(item._id, 1, undefined);
+  const handleAddToCart = (item: WishlistItem) => {
+    addItem(item._id, 1, undefined)
     handleRemoveItem(item._id)
   }
 
   if (items.length === 0) {
     return (
       <div className="container py-16">
-        <h1 className="mb-6 text-3xl font-light tracking-wide text-center">Your Wishlist</h1>
+        <h1 className="mb-6 text-center text-3xl font-light tracking-wide">Your Wishlist</h1>
         <div className="rounded-lg border border-dashed p-12 text-center">
           <h2 className="mb-4 text-xl font-light">Your wishlist is empty</h2>
-          <p className="mb-8 text-muted-foreground font-light">Add items to your wishlist to save them for later.</p>
+          <p className="mb-8 font-light text-muted-foreground">Add items to your wishlist to save them for later.</p>
           <Button asChild className="font-light">
             <Link href="/shop">Continue Shopping</Link>
           </Button>
@@ -50,7 +44,7 @@ export default function WishlistPage() {
 
   return (
     <div className="container py-8 md:py-12">
-      <h1 className="mb-6 text-3xl font-light tracking-wide text-center">Your Wishlist</h1>
+      <h1 className="mb-6 text-center text-3xl font-light tracking-wide">Your Wishlist</h1>
       <div className="mb-4 flex justify-end">
         <Button variant="outline" size="sm" onClick={clearWishlist} className="font-light">
           Clear Wishlist
@@ -61,7 +55,7 @@ export default function WishlistPage() {
           <div
             key={item._id}
             className={`product-card transition-all duration-300 ${
-              removingId === item._id ? "opacity-0 scale-95" : "opacity-100 scale-100"
+              removingId === item._id ? "scale-95 opacity-0" : "scale-100 opacity-100"
             }`}
           >
             <div className="relative aspect-square overflow-hidden">

@@ -4,7 +4,7 @@ import { createContext, useContext, useState, useEffect } from "react"
 import { productsAPI } from "@/lib/api"
 import { useAuth } from "./auth-provider"
 
-interface WishlistItem {
+export interface WishlistItem {
   _id: string
   name: string
   price: number

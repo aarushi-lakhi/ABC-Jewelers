@@ -28,9 +28,10 @@ export default function CategoryProductGrid({ category, title, subtitle }: Categ
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false)
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [filters, setFilters] = useState({
-    priceRange: [0, 50] as [number, number],
+    priceRange: [0, 10] as [number, number],
     sortBy: "featured",
   })
+  const [maxPrice, setMaxPrice] = useState(10)
   const { addItem } = useCart()
   const { addItem: addToWishlist, isInWishlist, removeItem: removeFromWishlist } = useWishlist()
   const [animatingHeartId, setAnimatingHeartId] = useState<string | null>(null)
@@ -38,7 +39,15 @@ export default function CategoryProductGrid({ category, title, subtitle }: Categ
   useEffect(() => {
     productsAPI
       .getAll({ category })
-      .then((data) => setProducts(data))
+      .then((data) => {
+        setProducts(data)
+        const computed = data.length > 0
+          ? Math.ceil(Math.max(...data.map((p: Product) => p.price)))
+          : 10
+        const rounded = Math.max(10, computed)
+        setMaxPrice(rounded)
+        setFilters(prev => ({ ...prev, priceRange: [0, rounded] as [number, number] }))
+      })
       .catch(() => setProducts([]))
       .finally(() => setLoading(false))
   }, [category])
@@ -136,8 +145,8 @@ export default function CategoryProductGrid({ category, title, subtitle }: Categ
                   <h3 className="mb-4 text-lg font-medium">Price Range</h3>
                   <div className="px-2">
                     <Slider
-                      defaultValue={[0, 50]}
-                      max={50}
+                      defaultValue={[0, maxPrice]}
+                      max={maxPrice}
                       step={1}
                       value={[filters.priceRange[0], filters.priceRange[1]]}
                       onValueChange={handlePriceRangeChange}
@@ -150,7 +159,7 @@ export default function CategoryProductGrid({ category, title, subtitle }: Categ
                 </div>
                 <Button
                   variant="outline"
-                  onClick={() => setFilters({ priceRange: [0, 50], sortBy: "featured" })}
+                  onClick={() => setFilters({ priceRange: [0, maxPrice], sortBy: "featured" })}
                 >
                   Reset Filters
                 </Button>
@@ -181,7 +190,7 @@ export default function CategoryProductGrid({ category, title, subtitle }: Categ
             </div>
             <Button
               variant="outline"
-              onClick={() => setFilters({ priceRange: [0, 50], sortBy: "featured" })}
+              onClick={() => setFilters({ priceRange: [0, maxPrice], sortBy: "featured" })}
             >
               Reset Filters
             </Button>
@@ -195,7 +204,7 @@ export default function CategoryProductGrid({ category, title, subtitle }: Categ
               <p className="mb-6 text-muted-foreground">Try adjusting your filters or search criteria</p>
               <Button
                 variant="outline"
-                onClick={() => setFilters({ priceRange: [0, 50], sortBy: "featured" })}
+                onClick={() => setFilters({ priceRange: [0, maxPrice], sortBy: "featured" })}
               >
                 Reset Filters
               </Button>

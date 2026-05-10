@@ -1,10 +1,30 @@
+"use client"
+
+import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { Instagram, Mail, Star } from "lucide-react"
+import { Instagram, Mail, Star, Loader2 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { emailAPI } from "@/lib/api"
 
 export default function Footer() {
+  const [newsletterEmail, setNewsletterEmail] = useState("")
+  const [newsletterState, setNewsletterState] = useState<"idle" | "loading" | "done" | "error">("idle")
+
+  const handleNewsletter = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newsletterEmail) return
+    setNewsletterState("loading")
+    try {
+      await emailAPI.newsletter(newsletterEmail)
+      setNewsletterState("done")
+      setNewsletterEmail("")
+    } catch {
+      setNewsletterState("error")
+    }
+  }
+
   return (
     <footer className="bg-accent paper-texture">
       <div className="container py-12 md:py-16">
@@ -40,85 +60,55 @@ export default function Footer() {
           <div>
             <h3 className="mb-4 text-sm font-medium">Shop</h3>
             <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="/shop/earrings" className="text-muted-foreground hover:text-primary">
-                  Earrings
-                </Link>
-              </li>
-              <li>
-                <Link href="/shop/rings" className="text-muted-foreground hover:text-primary">
-                  Rings
-                </Link>
-              </li>
-              <li>
-                <Link href="/shop/charms" className="text-muted-foreground hover:text-primary">
-                  Charms
-                </Link>
-              </li>
-              <li>
-                <Link href="/shop/chains" className="text-muted-foreground hover:text-primary">
-                  Chains
-                </Link>
-              </li>
-              <li>
-                <Link href="/shop" className="text-muted-foreground hover:text-primary">
-                  Collections
-                </Link>
-              </li>
+              <li><Link href="/shop/earrings" className="text-muted-foreground hover:text-primary">Earrings</Link></li>
+              <li><Link href="/shop/rings" className="text-muted-foreground hover:text-primary">Rings</Link></li>
+              <li><Link href="/shop/charms" className="text-muted-foreground hover:text-primary">Charms</Link></li>
+              <li><Link href="/shop/chains" className="text-muted-foreground hover:text-primary">Chains</Link></li>
+              <li><Link href="/shop" className="text-muted-foreground hover:text-primary">Collections</Link></li>
             </ul>
           </div>
           <div>
             <h3 className="mb-4 text-sm font-medium">Company</h3>
             <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="/about" className="text-muted-foreground hover:text-primary">
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link href="/impact" className="text-muted-foreground hover:text-primary">
-                  Our Impact
-                </Link>
-              </li>
-              <li>
-                <Link href="/sustainability" className="text-muted-foreground hover:text-primary">
-                  Sustainability
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="text-muted-foreground hover:text-primary">
-                  Contact
-                </Link>
-              </li>
-              <li>
-                <Link href="/faq" className="text-muted-foreground hover:text-primary">
-                  FAQ
-                </Link>
-              </li>
+              <li><Link href="/about" className="text-muted-foreground hover:text-primary">About Us</Link></li>
+              <li><Link href="/impact" className="text-muted-foreground hover:text-primary">Our Impact</Link></li>
+              <li><Link href="/sustainability" className="text-muted-foreground hover:text-primary">Sustainability</Link></li>
+              <li><Link href="/contact" className="text-muted-foreground hover:text-primary">Contact</Link></li>
+              <li><Link href="/faq" className="text-muted-foreground hover:text-primary">FAQ</Link></li>
             </ul>
           </div>
           <div>
             <h3 className="mb-4 text-sm font-medium">Stay Updated</h3>
             <p className="mb-4 text-sm text-muted-foreground">
-              Subscribe to our newsletter for new products, special offers, and impact stories.
+              Subscribe for new products, special offers, and impact stories.
             </p>
-            <form className="flex gap-2">
-              <Input type="email" placeholder="Your email" className="h-9 bg-white/80" />
-              <Button type="submit" size="sm">
-                Subscribe
-              </Button>
-            </form>
+            {newsletterState === "done" ? (
+              <p className="text-sm text-primary font-medium">You&apos;re subscribed! Thank you ✓</p>
+            ) : (
+              <form onSubmit={handleNewsletter} className="flex gap-2">
+                <Input
+                  type="email"
+                  placeholder="Your email"
+                  className="h-9 bg-white/80"
+                  value={newsletterEmail}
+                  onChange={e => setNewsletterEmail(e.target.value)}
+                  required
+                />
+                <Button type="submit" size="sm" disabled={newsletterState === "loading"}>
+                  {newsletterState === "loading" ? <Loader2 className="h-4 w-4 animate-spin" /> : "Subscribe"}
+                </Button>
+              </form>
+            )}
+            {newsletterState === "error" && (
+              <p className="mt-1 text-xs text-destructive">Something went wrong. Try again.</p>
+            )}
           </div>
         </div>
         <div className="mt-12 border-t border-primary/20 pt-6 text-center text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} ABC Jewelers. All rights reserved.</p>
+          <p suppressHydrationWarning>© {new Date().getFullYear()} ABC Jewelers. All rights reserved.</p>
           <div className="mt-2 flex justify-center gap-4">
-            <Link href="/privacy" className="hover:text-primary">
-              Privacy Policy
-            </Link>
-            <Link href="/terms" className="hover:text-primary">
-              Terms of Service
-            </Link>
+            <Link href="/privacy" className="hover:text-primary">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-primary">Terms of Service</Link>
           </div>
         </div>
       </div>

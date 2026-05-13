@@ -50,7 +50,8 @@ export default function Footer() {
                 </Link>
               </Button>
               <Button variant="ghost" size="icon" className="rounded-full" asChild>
-                <Link href="https://g.page/review/abcjewelers" target="_blank" rel="noopener noreferrer">
+                {/* TODO: try to replace this with a better link */}
+                <Link href="https://www.google.com/search?q=abc+jewelers+pearland#lrd=0x864093de04e93ae1:0xba734f07858426a,1,,,," target="_blank" rel="noopener noreferrer">
                   <Star className="h-5 w-5 text-primary" />
                   <span className="sr-only">Google Reviews</span>
                 </Link>
